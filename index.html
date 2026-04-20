@@ -205,6 +205,16 @@
 
 
     <script>
+
+ // --- OFFLINE SERVICE WORKER REGISTRATION ---
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('Offline Mode Active.', reg.scope))
+                .catch(err => console.log('Offline Mode Failed.', err));
+        });
+    }
+
     let resources = [];
     let totalCount = 0;
 
