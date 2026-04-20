@@ -233,9 +233,10 @@
         <div id="stats">Initializing...</div>
         
         <div id="actionBar">
-            <button class="action-btn" onclick="copyAllResults()">📋 Copy All</button>
-            <button class="action-btn" onclick="downloadResults()">📥 Download .txt</button>
-            <button class="action-btn" onclick="window.print()">🖨️ Print to PDF</button>
+            <button class="action-btn" onclick="copyAllResults()">Copy Full</button>
+            <button class="action-btn" onclick="downloadResults()">Full TXT Download</button>
+            <button class="action-btn" onclick="downloadCompactResults()" style="border-color:var(--accent); color:var(--accent);">Compact TXT Download</button>
+            <button class="action-btn" onclick="window.print()">Print to PDF</button>
         </div>
     </div>
 
@@ -243,21 +244,21 @@
         <div class="welcome">
             <details>
                 <summary>
-                    <span>🚀 SEARCH EXAMPLES</span>
+                    <span>SEARCH EXAMPLES</span>
                     <span style="font-size:0.8rem; color:var(--secondary);">[CLICK TO EXPAND]</span>
                 </summary>
                 <div style="padding: 0 20px 20px 20px; border-top: 1px solid rgba(6,182,212,0.2);">
-                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">WHOLE WORD</p>
+                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">Level 1: Keywords</p>
                     <code>food</code>
-                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">EXACT PHRASE</p>
+                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">Level 2: Exact Phrases</p>
                     <code>"mental health"</code>
-                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">EXCLUSION (NOT)</p>
+                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">Level 3: Exclusion</p>
                     <code>housing -youth</code>
-                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">COMPLEX STRING</p>
+                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">Level 4: Boolean Strings</p>
                     <code>"food" "transport" OR "transport" "housing"</code>
                 </div>
             </details>
-            <p style="margin-top:20px;">Database Online. Enter parameters above to begin.</p>
+            <p style="margin-top:20px;">Search to begin.</p>
         </div>
     </div>
 
@@ -310,7 +311,7 @@
         document.getElementById('searchBox').addEventListener('input', (e) => {
             const query = e.target.value.trim();
             if (query.length < 2) { 
-                document.getElementById('results').innerHTML = '<div class="welcome"><p>Ready for input. Search the Montreal directory above.</p></div>'; 
+                document.getElementById('results').innerHTML = '<div class="welcome"><p>Ready for input. Search above.</p></div>'; 
                 document.getElementById('actionBar').style.display = 'none';
                 updateStats(0, false);
                 return; 
@@ -354,7 +355,7 @@
             }
 
             if (list.length === 0) {
-                resultsDiv.innerHTML = '<div class="welcome">NO MATCHES FOUND.</div>';
+                resultsDiv.innerHTML = '<div class="welcome">NO MATCHES FOUND:(</div>';
                 return;
             }
 
@@ -374,7 +375,7 @@
                 // Maps
                 if (body.includes('Address:</span>')) {
                     const addr = body.split('Address:</span>')[1].split('<span class="label">')[0].trim();
-                    body = body.replace(addr, `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--muted)">${addr}</a>`);
+                    body = body.replace(addr, `<a href="https://www.google.com/maps/search/${encodeURIComponent(addr)}" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--muted)">${addr}</a>`);
                 }
 
                 // Highlighting
@@ -393,14 +394,28 @@
         }
         function copyAllResults() {
             navigator.clipboard.writeText(getCleanText()).then(() => {
-                const b = event.target; b.innerText = "✅ COPIED!";
-                setTimeout(() => b.innerText = "📋 COPY ALL", 2000);
+                const b = event.target; b.innerText = "OPIED!";
+                setTimeout(() => b.innerText = "COPY FULL", 2000);
             });
         }
         function downloadResults() {
             const blob = new Blob([getCleanText()], { type: 'text/plain' });
             const a = document.createElement('a');
             a.download = `Resources_${new Date().toISOString().slice(0,10)}.txt`;
+            a.href = URL.createObjectURL(blob);
+            a.click();
+        }
+        function downloadCompactResults() {
+            const compactText = currentFilteredList.map(block => {
+                const lines = block.split('\n');
+                const phoneMatch = block.match(/\d{3} \d{3}-\d{4}/);
+                let address = "No Address Listed";
+                if (block.includes("Address:")) address = block.split("Address:")[1].split('\n')[0].trim();
+                return `${lines[0].toUpperCase()}\n📞 ${phoneMatch ? phoneMatch[0] : "N/A"}\n📍 ${address}\n-----------------------`;
+            }).join('\n\n');
+            const blob = new Blob([compactText], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.download = `Contacts_${new Date().toISOString().slice(0,10)}.txt`;
             a.href = URL.createObjectURL(blob);
             a.click();
         }
