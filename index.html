@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resource Search</title>
+    <title>Resource Search Pro</title>
     <style>
         :root { 
             --bg: #0f172a;
@@ -14,7 +14,7 @@
             --text: #f1f5f9;
             --muted: #94a3b8;
         }
-        
+
         body { 
             font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; 
             margin: 0; 
@@ -32,13 +32,13 @@
             top: 0; 
             background: linear-gradient(135deg, #083344, #115e59);
             color: white; 
-            padding: 30px 15px; 
+            padding: 25px 15px; 
             text-align: center; 
             z-index: 100; 
             box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); 
             border-bottom: 2px solid var(--primary);
         }
-        
+
         h2 { 
             margin: 0; 
             font-size: 1.6rem; 
@@ -48,7 +48,7 @@
             color: var(--primary);
             text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
         }
-        
+
         #searchBox { 
             width: 90%; 
             max-width: 550px; 
@@ -67,7 +67,7 @@
             border-color: var(--primary);
             box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
         }
-        
+
         #stats { 
             font-size: 0.75rem; 
             margin-top: 12px; 
@@ -80,6 +80,32 @@
             border-radius: 4px;
             border: 1px solid rgba(6, 182, 212, 0.3);
             text-transform: uppercase;
+        }
+
+        #actionBar {
+            margin-top: 15px;
+            display: none;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            background: var(--card-bg);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: bold;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: var(--bg);
         }
 
         #results { 
@@ -141,18 +167,61 @@
         }
 
         mark { 
-            background: rgba(6, 182, 212, 0.3);
+            background: rgba(6, 182, 212, 0.4);
             color: #fff;
-            padding: 2px 4px; 
-            border-radius: 2px; 
-            border-bottom: 2px solid var(--primary);
+            padding: 0 2px;
+            border-radius: 2px;
         }
+
+        a { color: var(--secondary); text-decoration: underline; transition: opacity 0.2s; }
+        a:hover { opacity: 0.8; color: var(--primary); }
 
         .welcome {
             text-align: center;
-            padding: 80px;
+            padding: 40px;
             color: var(--muted);
-            font-size: 1.1rem;
+        }
+
+        details {
+            text-align: left;
+            max-width: 600px;
+            margin: auto;
+            border: 1px solid var(--primary);
+            border-radius: 15px;
+            background: rgba(6, 182, 212, 0.05);
+            overflow: hidden;
+        }
+
+        summary {
+            padding: 20px;
+            color: var(--primary);
+            font-weight: 800;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        code {
+            display: block;
+            background: #000;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #333;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            body { background: white; color: black; padding: 0; }
+            .header, .welcome, #actionBar, mark { background: transparent !important; box-shadow: none !important; color: black !important; }
+            #searchBox, #actionBar, .welcome, #stats { display: none !important; }
+            .card { border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px; background: white !important; }
+            .org-header { background: #eee !important; color: black !important; border-bottom: 1px solid #ccc; }
+            .label { border: none !important; background: transparent !important; color: black !important; font-weight: bold; }
+            a { color: black !important; text-decoration: none !important; }
         }
     </style>
 </head>
@@ -162,171 +231,179 @@
         <h2>Resource Search</h2>
         <input type="text" id="searchBox" placeholder='Search: "food" OR "shelter"...' spellcheck="false">
         <div id="stats">Initializing...</div>
-    </div>
-
-        <div id="results">
-        <div class="welcome">
-            <div style="text-align:left; max-width:600px; margin:auto; border:1px solid var(--primary); border-radius:15px; background:rgba(6,182,212,0.05); overflow:hidden; box-shadow: 0 0 20px rgba(6,182,212,0.1);">
-                
-                <details style="cursor:pointer;">
-                    <summary style="padding:20px; color:var(--primary); font-weight:800; letter-spacing:1px; list-style:none; display:flex; justify-content:space-between; align-items:center;">
-                        <span>VIEW SEARCH EXAMPLES</span><br>
-                        <span style="font-size:0.8rem; color:var(--secondary);">[CLICK TO SHOW EXAMPLES]</span>
-                    </summary>
-
-                    <div style="padding:0 20px 20px 20px; border-top:1px solid rgba(6,182,212,0.2);">
-                        
-                        <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; text-transform:uppercase; margin:15px 0 5px 0;">Simple Keywords</p>
-                        <code style="display:block; background:#000; padding:8px; border-radius:5px; border:1px solid #333; font-size:0.9rem;">food</code>
-
-                        <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; text-transform:uppercase; margin:15px 0 5px 0;">Exact Phrases</p>
-                        <code style="display:block; background:#000; padding:8px; border-radius:5px; border:1px solid #333; font-size:0.9rem;">"mental health"</code>
-
-                        <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; text-transform:uppercase; margin:15px 0 5px 0;">Multiple Phrases</p>
-                        <code style="display:block; background:#000; padding:8px; border-radius:5px; border:1px solid #333; font-size:0.9rem;">"food bank" OR "low income" housing</code>
-
-                        <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; text-transform:uppercase; margin:15px 0 5px 0;">Boolean String</p>
-                        <p style="font-size:0.75rem; color:var(--muted); margin-bottom:5px;">Find Multiple Resources At Once</p>
-                        <code style="display:block; background:#000; padding:10px; border-radius:5px; border:1px solid var(--primary); color:#fff; font-size:0.9rem;">"food" "transport" OR "transport" "housing"</code>
-
-<p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; text-transform:uppercase; margin:15px 0 5px 0;">Exclusion of Words or Phrases (NOT)</p>
-<p style="font-size:0.75rem; color:var(--muted); margin-bottom:5px;">Exclude specific terms using the minus sign (-)</p>
-<code style="display:block; background:#000; padding:10px; border-radius:5px; border:1px solid #f43f5e; color:#fff; font-size:0.9rem;">housing -youth</code>
-
-                    </div>
-                </details>
-                
-                <div style="background:rgba(0,0,0,0.2); padding:10px; text-align:center; font-size:0.8rem; color:var(--muted);">
-                    Type into the search above to begin.
-                </div>
-            </div>
+        
+        <div id="actionBar">
+            <button class="action-btn" onclick="copyAllResults()">📋 Copy All</button>
+            <button class="action-btn" onclick="downloadResults()">📥 Download .txt</button>
+            <button class="action-btn" onclick="window.print()">🖨️ Print to PDF</button>
         </div>
     </div>
 
+    <div id="results">
+        <div class="welcome">
+            <details>
+                <summary>
+                    <span>🚀 SEARCH EXAMPLES</span>
+                    <span style="font-size:0.8rem; color:var(--secondary);">[CLICK TO EXPAND]</span>
+                </summary>
+                <div style="padding: 0 20px 20px 20px; border-top: 1px solid rgba(6,182,212,0.2);">
+                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">WHOLE WORD</p>
+                    <code>food</code>
+                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">EXACT PHRASE</p>
+                    <code>"mental health"</code>
+                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">EXCLUSION (NOT)</p>
+                    <code>housing -youth</code>
+                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">COMPLEX STRING</p>
+                    <code>"food" "transport" OR "transport" "housing"</code>
+                </div>
+            </details>
+            <p style="margin-top:20px;">Database Online. Enter parameters above to begin.</p>
+        </div>
+    </div>
 
     <script>
-
- // --- OFFLINE SERVICE WORKER REGISTRATION ---
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Offline Mode Active.', reg.scope))
-                .catch(err => console.log('Offline Mode Failed.', err));
-        });
-    }
-
-    let resources = [];
-    let totalCount = 0;
-
-    fetch('montreal2-en.txt')
-        .then(res => res.text())
-        .then(rawText => {
-            let cleanText = rawText.replace(/--- PAGE \d+ ---/g, "").replace(/^\d+$/gm, "").replace(/[ \t]{2,}/g, ' ');
-            let rawBlocks = cleanText.split(/(?<=Legal status: .*\n)/gi);
-            if (rawBlocks.length > 0) rawBlocks.shift(); 
-            const seen = new Set();
-            resources = [];
-            rawBlocks.forEach(block => {
-                let lines = block.trim().split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                if (lines.length < 3) return;
-                let addressIndex = lines.findIndex(line => /\d+/.test(line) && line.length > 10);
-                let startIndex = addressIndex > 0 ? addressIndex - 1 : 0;
-                if (lines[startIndex].includes(':')) startIndex++;
-                let processedLines = lines.slice(startIndex);
-                const orgName = processedLines[0];
-                const phoneMatch = block.match(/\d{3} \d{3}-\d{4}/);
-                const phoneKey = phoneMatch ? phoneMatch[0] : "";
-                const fingerPrint = (orgName.substring(0, 30) + phoneKey).toLowerCase().replace(/[^a-z0-9]/g, '');
-                if (!seen.has(fingerPrint)) {
-                    seen.add(fingerPrint);
-                    resources.push(processedLines.join('\n'));
-                }
+        // --- 1. OFFLINE SERVICE WORKER ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
             });
-            totalCount = resources.length;
-            updateStats(0, false);
-        });
-
-    function updateStats(matches, isSearching) {
-        const statsDiv = document.getElementById('stats');
-        statsDiv.innerText = isSearching ? `FOUND: ${matches} MATCHES | FROM ${totalCount} TOTAL RESOURCES` : `DATABASE ONLINE | ${totalCount} TOTAL RESOURCES`;
-    }
-
-    document.getElementById('searchBox').addEventListener('input', (e) => {
-        const query = e.target.value.trim();
-        if (query.length < 2) { 
-            document.getElementById('results').innerHTML = '<div class="welcome">Ready for input. Search the Montreal directory above.</div>'; 
-            updateStats(0, false);
-            return; 
         }
 
-        const orGroups = query.split(/\s+OR\s+/i);
-        const filtered = resources.filter(block => {
-            const content = block.toLowerCase();
-            return orGroups.some(group => {
-                const includeTerms = [];
-                const excludeTerms = [];
-                // Regex to find phrases in quotes, excluded terms starting with -, or normal words
-                const regex = /(-"([^"]+)"|-"(\S+)"|-(\S+))|("([^"]+)"|(\S+))/g;
-                let m;
-                
-                while ((m = regex.exec(group)) !== null) {
-                    let term;
-                    if (m[1]) { // This is an exclusion term
-                        term = (m[2] || m[3] || m[4]).toLowerCase();
-                        if (term !== "not") excludeTerms.push(term);
-                    } else { // This is an inclusion term
-                        term = (m[6] || m[7]).toLowerCase();
-                        if (term !== "not" && term !== "or") includeTerms.push(term);
+        // --- 2. DATA LOAD ---
+        let resources = [];
+        let totalCount = 0;
+        let currentFilteredList = [];
+
+        fetch('montreal2-en.txt')
+            .then(res => res.text())
+            .then(rawText => {
+                let cleanText = rawText.replace(/--- PAGE \d+ ---/g, "").replace(/^\d+$/gm, "").replace(/[ \t]{2,}/g, ' ');
+                let rawBlocks = cleanText.split(/(?<=Legal status: .*\n)/gi);
+                if (rawBlocks.length > 0) rawBlocks.shift(); 
+
+                const seen = new Set();
+                rawBlocks.forEach(block => {
+                    let lines = block.trim().split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                    if (lines.length < 3) return;
+                    let addressIndex = lines.findIndex(line => /\d+/.test(line) && line.length > 10);
+                    let startIndex = addressIndex > 0 ? addressIndex - 1 : 0;
+                    if (lines[startIndex].includes(':')) startIndex++;
+                    let processedLines = lines.slice(startIndex);
+                    const orgName = processedLines[0];
+                    const phoneMatch = block.match(/\d{3} \d{3}-\d{4}/);
+                    const fingerPrint = (orgName.substring(0, 30) + (phoneMatch ? phoneMatch[0] : "")).toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (!seen.has(fingerPrint)) {
+                        seen.add(fingerPrint);
+                        resources.push(processedLines.join('\n'));
                     }
-                }
-
-                const hasAllIncludes = includeTerms.every(t => content.includes(t));
-                const hasNoExcludes = excludeTerms.every(t => !content.includes(t));
-                
-                return hasAllIncludes && hasNoExcludes;
+                });
+                totalCount = resources.length;
+                updateStats(0, false);
             });
+
+        function updateStats(matches, isSearching) {
+            const statsDiv = document.getElementById('stats');
+            statsDiv.innerText = isSearching ? `FOUND: ${matches} MATCHES | FROM ${totalCount} TOTAL RESOURCES` : `DATABASE ONLINE | ${totalCount} TOTAL RESOURCES`;
+        }
+
+        // --- 3. SEARCH LOGIC ---
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            if (query.length < 2) { 
+                document.getElementById('results').innerHTML = '<div class="welcome"><p>Ready for input. Search the Montreal directory above.</p></div>'; 
+                document.getElementById('actionBar').style.display = 'none';
+                updateStats(0, false);
+                return; 
+            }
+
+            const orGroups = query.split(/\s+OR\s+/i);
+            const filtered = resources.filter(block => {
+                const content = block.toLowerCase();
+                return orGroups.some(group => {
+                    const includes = [], excludes = [];
+                    const regex = /(-"([^"]+)"|-"(\S+)"|-(\S+))|("([^"]+)"|(\S+))/g;
+                    let m;
+                    while ((m = regex.exec(group)) !== null) {
+                        if (m[1]) excludes.push({ text: (m[2]||m[3]||m[4]).toLowerCase(), isPhrase: !!m[2] });
+                        else {
+                            let t = (m[6]||m[7]).toLowerCase();
+                            if (t !== "or" && t !== "not") includes.push({ text: t, isPhrase: !!m[6] });
+                        }
+                    }
+                    const hasInc = includes.every(t => t.isPhrase ? content.includes(t.text) : new RegExp(`\\b${t.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(content));
+                    const hasNoExc = excludes.every(t => t.isPhrase ? !content.includes(t.text) : !new RegExp(`\\b${t.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i').test(content));
+                    return hasInc && hasNoExc;
+                });
+            });
+
+            currentFilteredList = filtered;
+            document.getElementById('actionBar').style.display = filtered.length > 0 ? 'flex' : 'none';
+            updateStats(filtered.length, true);
+            render(filtered, query);
         });
 
-        updateStats(filtered.length, true);
-        render(filtered, query);
-    });
-
-    function render(list, query) {
-        const resultsDiv = document.getElementById('results');
-        const highlightTerms = [];
-        const hRegex = /"([^"]+)"|(\S+)/g;
-        let hMatch;
-        // Only highlight terms that aren't being excluded
-        while ((hMatch = hRegex.exec(query.replace(/\s+OR\s+/gi, " "))) !== null) {
-            const val = hMatch[1] || hMatch[2];
-            if (val && !val.startsWith('-') && val.toLowerCase() !== 'or' && val.toLowerCase() !== 'not') {
-                highlightTerms.push(val.toLowerCase().replace(/^"/, "").replace(/"$/, ""));
+        // --- 4. RENDER & LINKS ---
+        function render(list, query) {
+            const resultsDiv = document.getElementById('results');
+            const hTerms = [];
+            const hRegex = /"([^"]+)"|(\S+)/g;
+            let hMatch;
+            while ((hMatch = hRegex.exec(query.replace(/\s+OR\s+/gi, " "))) !== null) {
+                let val = hMatch[1] || hMatch[2];
+                if (val && !val.startsWith('-') && !['or','not'].includes(val.toLowerCase())) hTerms.push(val.toLowerCase());
             }
+
+            if (list.length === 0) {
+                resultsDiv.innerHTML = '<div class="welcome">NO MATCHES FOUND.</div>';
+                return;
+            }
+
+            resultsDiv.innerHTML = list.slice(0, 100).map(block => {
+                const lines = block.split('\n');
+                let body = lines.slice(1).join('\n');
+
+                // Links
+                body = body.replace(/(?<!EMAIL: )(?<!">)(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[^\s\n]*)?/gi, (url) => `<a href="${url.startsWith('http')?url:'https://'+url}" target="_blank">${url}</a>`);
+                body = body.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi, `<a href="mailto:$1">$1</a>`);
+                body = body.replace(/(\d{3} \d{3}-\d{4})/g, `<a href="tel:$1" style="text-decoration:none;font-weight:bold;color:var(--primary)">$1</a>`);
+
+                // Labels
+                const labels = ["Services:", "Eligibility:", "Hours:", "Website:", "Email:", "Coverage area:", "Address:", "Capacity:", "Financing:", "Legal status:", "Fees:"];
+                labels.forEach(l => body = body.replace(new RegExp(`(${l})`, "g"), `<span class="label">$1</span>`));
+
+                // Maps
+                if (body.includes('Address:</span>')) {
+                    const addr = body.split('Address:</span>')[1].split('<span class="label">')[0].trim();
+                    body = body.replace(addr, `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--muted)">${addr}</a>`);
+                }
+
+                // Highlighting
+                [...new Set(hTerms)].sort((a,b) => b.length - a.length).forEach(t => {
+                    if (t.length < 2) return;
+                    body = body.replace(new RegExp(`(?<!<[^>]*)\\b(${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b`, "gi"), "<mark>$1</mark>");
+                });
+
+                return `<div class="card"><div class="org-header">${lines[0]}</div><div class="card-body">${body}</div></div>`;
+            }).join('');
         }
 
-        if (list.length === 0) {
-            resultsDiv.innerHTML = '<div class="welcome">NO MATCHES FOUND.</div>';
-            return;
+        // --- 5. EXPORT ---
+        function getCleanText() {
+            return currentFilteredList.map(b => `------------------------------------------\n${b.replace(/<[^>]*>/g, '')}\n`).join('\n');
         }
-
-        resultsDiv.innerHTML = list.slice(0, 50).map(block => {
-            const lines = block.split('\n');
-            const orgName = lines[0];
-            let body = lines.slice(1).join('\n');
-            const labels = ["Services:", "Eligibility:", "Hours:", "Website:", "Email:", "Coverage area:", "Address:", "Capacity:", "Financing:", "Legal status:", "Fees:"];
-            
-            labels.forEach(label => {
-                body = body.replace(new RegExp(`(${label})`, "g"), `<span class="label">$1</span>`);
+        function copyAllResults() {
+            navigator.clipboard.writeText(getCleanText()).then(() => {
+                const b = event.target; b.innerText = "✅ COPIED!";
+                setTimeout(() => b.innerText = "📋 COPY ALL", 2000);
             });
-
-            [...new Set(highlightTerms)].sort((a, b) => b.length - a.length).forEach(term => {
-                if (term.length < 3) return;
-                body = body.replace(new RegExp(`(${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, "gi"), "<mark>$1</mark>");
-            });
-
-            return `<div class="card"><div class="org-header">${orgName}</div><div class="card-body">${body}</div></div>`;
-        }).join('');
-    }
-</script>
+        }
+        function downloadResults() {
+            const blob = new Blob([getCleanText()], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.download = `Resources_${new Date().toISOString().slice(0,10)}.txt`;
+            a.href = URL.createObjectURL(blob);
+            a.click();
+        }
+    </script>
 </body>
 </html>
