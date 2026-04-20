@@ -6,356 +6,174 @@
     <title>Resource Search Pro</title>
     <style>
         :root { 
-            --bg: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --primary: #06b6d4;
-            --secondary: #2dd4bf;
-            --accent: #22d3ee; 
-            --text: #f1f5f9;
-            --muted: #94a3b8;
+            --bg: #0f172a; --card-bg: rgba(30, 41, 59, 0.7); --primary: #06b6d4;
+            --secondary: #2dd4bf; --accent: #22d3ee; --text: #f1f5f9; --muted: #94a3b8;
         }
-
         body { 
-            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; 
-            margin: 0; 
-            background-color: var(--bg);
-            background-image: 
-                linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+            font-family: 'Inter', sans-serif; margin: 0; background-color: var(--bg);
+            color: var(--text); padding-bottom: 50px; 
+            background-image: linear-gradient(rgba(6,182,212,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(6,182,212,0.05) 1px, transparent 1px);
             background-size: 30px 30px;
-            color: var(--text);
-            padding-bottom: 50px; 
         }
-
-        .header { 
-            position: sticky; 
-            top: 0; 
-            background: linear-gradient(135deg, #083344, #115e59);
-            color: white; 
-            padding: 25px 15px; 
-            text-align: center; 
-            z-index: 100; 
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); 
-            border-bottom: 2px solid var(--primary);
-        }
-
-        h2 { 
-            margin: 0; 
-            font-size: 1.6rem; 
-            font-weight: 900;
-            text-transform: uppercase; 
-            letter-spacing: 3px; 
-            color: var(--primary);
-            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
-        }
-
-        #searchBox { 
-            width: 90%; 
-            max-width: 550px; 
-            padding: 15px 25px; 
-            border-radius: 12px; 
-            border: 2px solid rgba(6, 182, 212, 0.3); 
-            background: rgba(15, 23, 42, 0.8);
-            color: var(--primary);
-            font-size: 1.1rem; 
-            margin-top: 15px; 
-            outline: none; 
-            transition: all 0.3s ease;
-        }
-
-        #stats { 
-            font-size: 0.75rem; 
-            margin-top: 12px; 
-            font-weight: 700; 
-            letter-spacing: 1.5px;
-            background: rgba(6, 182, 212, 0.15);
-            color: var(--secondary);
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 4px;
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            text-transform: uppercase;
-        }
-
-        #actionBar {
-            margin-top: 15px;
-            display: none;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            background: var(--card-bg);
-            color: var(--primary);
-            border: 1px solid var(--primary);
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.75rem;
-            font-weight: bold;
-            transition: all 0.2s;
-            text-transform: uppercase;
-        }
-
-        .action-btn:hover {
-            background: var(--primary);
-            color: var(--bg);
-        }
-
-        #results { 
-            padding: 20px; 
-            max-width: 950px; 
-            margin: auto; 
-            display: grid;
-            gap: 25px;
-        }
-
-        .card { 
-            background: var(--card-bg); 
-            backdrop-filter: blur(12px);
-            border-radius: 15px; 
-            overflow: hidden; 
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: all 0.3s ease;
-            animation: fadeIn 0.4s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .org-header { 
-            background: rgba(6, 182, 212, 0.1);
-            padding: 20px; 
-            color: var(--primary); 
-            font-weight: 800; 
-            font-size: 1.3rem; 
-            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
-        }
-
-        .card-body { 
-            padding: 20px; 
-            font-size: 0.95rem; 
-            line-height: 1.8; 
-            white-space: pre-wrap; 
-            color: #cbd5e1;
-        }
-
-        .label { 
-            color: var(--secondary); 
-            font-weight: 800; 
-            font-size: 0.7rem; 
-            text-transform: uppercase; 
-            display: inline-block; 
-            margin-top: 18px; 
-            background: rgba(45, 212, 191, 0.1);
-            padding: 3px 12px;
-            border-radius: 4px;
-            border-left: 3px solid var(--secondary);
-        }
-
-        mark { 
-            background: rgba(6, 182, 212, 0.4);
-            color: #fff;
-            padding: 0 2px;
-            border-radius: 2px;
-        }
-
-        a { color: var(--secondary); text-decoration: underline; transition: opacity 0.2s; }
-        a:hover { opacity: 0.8; color: var(--primary); }
-
-        .welcome { text-align: center; padding: 40px; color: var(--muted); }
-
-        /* PRINT STYLES */
-        @media print {
-            body { background: white; color: black; padding: 0; }
-            .header, .welcome, #actionBar, mark { background: transparent !important; box-shadow: none !important; color: black !important; }
-            #searchBox, #actionBar, .welcome, #stats { display: none !important; }
-            .card { border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px; background: white !important; }
-            .org-header { background: #eee !important; color: black !important; border-bottom: 1px solid #ccc; }
-            .label { border: none !important; background: transparent !important; color: black !important; font-weight: bold; }
-        }
+        .header { position: sticky; top: 0; background: linear-gradient(135deg, #083344, #115e59); padding: 25px 15px; text-align: center; z-index: 100; border-bottom: 2px solid var(--primary); }
+        #searchBox { width: 90%; max-width: 550px; padding: 15px 25px; border-radius: 12px; border: 2px solid rgba(6,182,212,0.3); background: rgba(15,23,42,0.8); color: var(--primary); font-size: 1.1rem; outline: none; }
+        #stats { font-size: 0.75rem; margin-top: 12px; color: var(--secondary); background: rgba(6,182,212,0.15); padding: 5px 15px; border-radius: 4px; text-transform: uppercase; display: inline-block; }
+        #actionBar { margin-top: 15px; display: none; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .action-btn { background: var(--card-bg); color: var(--primary); border: 1px solid var(--primary); padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        #results { padding: 20px; max-width: 950px; margin: auto; display: grid; gap: 25px; }
+        .card { background: var(--card-bg); border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden; animation: fadeIn 0.3s ease; }
+        .org-header { background: rgba(6, 182, 212, 0.1); padding: 20px; color: var(--primary); font-weight: 800; font-size: 1.3rem; }
+        .card-body { padding: 20px; font-size: 0.95rem; line-height: 1.8; white-space: pre-wrap; }
+        .label { color: var(--secondary); font-weight: 800; font-size: 0.7rem; text-transform: uppercase; background: rgba(45, 212, 191, 0.1); padding: 3px 12px; border-radius: 4px; border-left: 3px solid var(--secondary); display: inline-block; margin-top: 10px; }
+        mark { background: rgba(6, 182, 212, 0.4); color: #fff; padding: 0 2px; border-radius: 2px; }
+        a { color: var(--secondary); text-decoration: underline; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+        @media print { .header, #actionBar, .welcome { display: none !important; } body { background: white; color: black; } .card { border: 1px solid #ccc !important; page-break-inside: avoid; } }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h2>Resource Search</h2>
-        <input type="text" id="searchBox" placeholder='Search: "food" OR "shelter"...' spellcheck="false">
-        <div id="stats">Initializing...</div>
-        
-        <div id="actionBar">
-            <button class="action-btn" onclick="copyAllResults()">📋 Copy Full</button>
-            <button class="action-btn" onclick="downloadResults()">📥 Full TXT</button>
-            <button class="action-btn" onclick="downloadCompactResults()" style="border-color:var(--accent); color:var(--accent);">📇 Contacts TXT</button>
-            <button class="action-btn" onclick="window.print()">🖨️ Print PDF</button>
-        </div>
+<div class="header">
+    <h2>Resource Search</h2>
+    <input type="text" id="searchBox" placeholder='Example: "food" OR -"women and children"' spellcheck="false">
+    <br><div id="stats">Initializing...</div>
+    <div id="actionBar">
+        <button class="action-btn" onclick="copyAllResults()">📋 Copy Full</button>
+        <button class="action-btn" onclick="downloadResults()">📥 Full TXT</button>
+        <button class="action-btn" onclick="downloadCompactResults()">📇 Contacts TXT</button>
+        <button class="action-btn" onclick="window.print()">🖨️ Print PDF</button>
     </div>
+</div>
 
-    <div id="results">
-        <div class="welcome">Database Online. Search to begin.</div>
-    </div>
+<div id="results"><div class="welcome" style="text-align:center; padding:50px; color:var(--muted);">Ready to search.</div></div>
 
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
-            });
-        }
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(e => {}); });
+    }
 
-        let resources = [];
-        let totalCount = 0;
-        let currentFilteredList = [];
+    let resources = [];
+    let currentFilteredList = [];
 
-        fetch('montreal2-en.txt')
-            .then(res => res.text())
-            .then(rawText => {
-                let cleanText = rawText.replace(/--- PAGE \d+ ---/g, "").replace(/^\d+$/gm, "").replace(/[ \t]{2,}/g, ' ');
-                let rawBlocks = cleanText.split(/(?<=Legal status: .*\n)/gi);
-                if (rawBlocks.length > 0) rawBlocks.shift(); 
+    // 1. DATA LOADING
+    fetch('montreal2-en.txt').then(res => res.text()).then(text => {
+        let cleanText = text.replace(/--- PAGE \d+ ---/g, "").replace(/^\d+$/gm, "");
+        let rawBlocks = cleanText.split(/(?<=Legal status: .*\n)/gi);
+        if (rawBlocks.length > 0) rawBlocks.shift(); 
+        const seen = new Set();
+        rawBlocks.forEach(block => {
+            let lines = block.trim().split('\n').filter(l => l.trim().length > 0);
+            if (lines.length < 3) return;
+            let orgName = lines[0].includes(':') ? lines[1] : lines[0];
+            const fingerPrint = orgName.toLowerCase().replace(/[^a-z]/g, '').substring(0, 40);
+            if (!seen.has(fingerPrint)) { seen.add(fingerPrint); resources.push(block.trim()); }
+        });
+        document.getElementById('stats').innerText = `DATABASE ONLINE | ${resources.length} RESOURCES`;
+    });
 
-                const seen = new Set();
-                rawBlocks.forEach(block => {
-                    let lines = block.trim().split('\n').map(l => l.trim()).filter(l => l.length > 0);
-                    if (lines.length < 3) return;
-                    let addressIndex = lines.findIndex(line => /\d+/.test(line) && line.length > 10);
-                    let startIndex = addressIndex > 0 ? addressIndex - 1 : 0;
-                    if (lines[startIndex].includes(':')) startIndex++;
-                    let processedLines = lines.slice(startIndex);
-                    const orgName = processedLines[0];
-                    const phoneMatch = block.match(/\d{3} \d{3}-\d{4}/);
-                    const fingerPrint = (orgName.substring(0, 30) + (phoneMatch ? phoneMatch[0] : "")).toLowerCase().replace(/[^a-z0-9]/g, '');
-                    if (!seen.has(fingerPrint)) {
-                        seen.add(fingerPrint);
-                        resources.push(processedLines.join('\n'));
-                    }
-                });
-                totalCount = resources.length;
-                updateStats(0, false);
-            });
+    // 2. STATE-MACHINE PARSER (The "Brain")
+    function parseQuery(group) {
+        const terms = { includes: [], excludes: [] };
+        let i = 0;
+        while (i < group.length) {
+            let char = group[i];
+            if (char === ' ') { i++; continue; }
+            
+            let isExclude = false;
+            if (char === '-') { isExclude = true; i++; char = group[i]; }
 
-        function updateStats(matches, isSearching) {
-            const statsDiv = document.getElementById('stats');
-            statsDiv.innerText = isSearching ? `FOUND: ${matches} MATCHES | FROM ${totalCount} TOTAL RESOURCES` : `DATABASE ONLINE | ${totalCount} TOTAL RESOURCES`;
-        }
-
-        document.getElementById('searchBox').addEventListener('input', (e) => {
-            const query = e.target.value.trim();
-            if (query.length < 2) { 
-                document.getElementById('results').innerHTML = '<div class="welcome">Ready for input.</div>'; 
-                document.getElementById('actionBar').style.display = 'none';
-                updateStats(0, false);
-                return; 
+            let term = "";
+            let isPhrase = false;
+            if (char === '"') {
+                isPhrase = true; i++;
+                while (i < group.length && group[i] !== '"') { term += group[i]; i++; }
+                i++;
+            } else {
+                while (i < group.length && group[i] !== ' ') { term += group[i]; i++; }
             }
 
-            const orGroups = query.split(/\s+OR\s+/i);
-            const filtered = resources.filter(block => {
-                const content = block.toLowerCase();
-                return orGroups.some(group => {
-                    const includes = [], excludes = [];
-                    // Atomic Regex: Correctly handles -"" and "" phrases
-                    const regex = /(-?"[^"]+")|(-?\S+)/g;
-                    let m;
-                    while ((m = regex.exec(group)) !== null) {
-                        let token = m[0].toLowerCase();
-                        if (token.startsWith('-')) {
-                            let val = token.substring(1).replace(/"/g, '');
-                            if (val !== "not") excludes.push({ text: val, isPhrase: token.includes('"') });
-                        } else {
-                            let val = token.replace(/"/g, '');
-                            if (val !== "or" && val !== "not") includes.push({ text: val, isPhrase: token.includes('"') });
-                        }
-                    }
+            if (term && term.toLowerCase() !== 'or') {
+                const target = isExclude ? terms.excludes : terms.includes;
+                target.push({ text: term.toLowerCase(), isPhrase });
+            }
+        }
+        return terms;
+    }
 
-                    const checkMatch = (t, target) => {
-                        const escaped = t.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                        // Use literal match for phrases, word boundary for single words
-                        const reg = t.isPhrase ? new RegExp(escaped, 'i') : new RegExp(`\\b${escaped}\\b`, 'i');
-                        return reg.test(target);
-                    };
+    // 3. SEARCH LOGIC
+    document.getElementById('searchBox').addEventListener('input', (e) => {
+        const query = e.target.value.trim();
+        if (query.length < 2) { 
+            document.getElementById('results').innerHTML = '<div class="welcome" style="text-align:center; padding:50px; color:var(--muted);">Ready to search.</div>'; 
+            document.getElementById('actionBar').style.display = 'none';
+            return; 
+        }
 
-                    return includes.every(t => checkMatch(t, content)) && !excludes.some(t => checkMatch(t, content));
-                });
+        const orGroups = query.split(/\s+OR\s+/i);
+        currentFilteredList = resources.filter(block => {
+            const content = block.toLowerCase();
+            return orGroups.some(group => {
+                const { includes, excludes } = parseQuery(group);
+                
+                const match = (t) => {
+                    const esc = t.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const reg = t.isPhrase ? new RegExp(esc, 'i') : new RegExp(`\\b${esc}\\b`, 'i');
+                    return reg.test(content);
+                };
+
+                return includes.every(match) && !excludes.some(match);
             });
-
-            currentFilteredList = filtered;
-            document.getElementById('actionBar').style.display = filtered.length > 0 ? 'flex' : 'none';
-            updateStats(filtered.length, true);
-            render(filtered, query);
         });
 
-        function render(list, query) {
-            const resultsDiv = document.getElementById('results');
-            const hTerms = [];
-            const hRegex = /"([^"]+)"|(\S+)/g;
-            let hMatch;
-            while ((hMatch = hRegex.exec(query.replace(/\s+OR\s+/gi, " "))) !== null) {
-                let val = hMatch[1] || hMatch[2];
-                if (val && !val.startsWith('-') && !['or','not'].includes(val.toLowerCase())) hTerms.push(val.toLowerCase());
-            }
+        document.getElementById('actionBar').style.display = currentFilteredList.length > 0 ? 'flex' : 'none';
+        document.getElementById('stats').innerText = `FOUND: ${currentFilteredList.length} MATCHES`;
+        render(currentFilteredList, query);
+    });
 
-            if (list.length === 0) {
-                resultsDiv.innerHTML = '<div class="welcome">NO MATCHES FOUND.</div>';
-                return;
-            }
+    // 4. RENDERING
+    function render(list, query) {
+        const resultsDiv = document.getElementById('results');
+        const hTerms = [];
+        const tokens = parseQuery(query.replace(/\s+OR\s+/gi, " "));
+        const highlightList = [...tokens.includes.map(t => t.text)];
 
-            resultsDiv.innerHTML = list.slice(0, 100).map(block => {
-                const lines = block.split('\n');
-                let body = lines.slice(1).join('\n');
+        resultsDiv.innerHTML = list.slice(0, 100).map(block => {
+            const lines = block.split('\n');
+            const title = lines[0];
+            let body = lines.slice(1).join('\n');
 
-                body = body.replace(/(?<!EMAIL: )(?<!">)(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[^\s\n]*)?/gi, (url) => `<a href="${url.startsWith('http')?url:'https://'+url}" target="_blank">${url}</a>`);
-                body = body.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi, `<a href="mailto:$1">$1</a>`);
-                body = body.replace(/(\d{3} \d{3}-\d{4})/g, `<a href="tel:$1" style="text-decoration:none;font-weight:bold;color:var(--primary)">$1</a>`);
+            // Formatter
+            body = body.replace(/(\d{3} \d{3}-\d{4})/g, `<a href="tel:$1" style="font-weight:bold">$1</a>`);
+            const labels = ["Services:", "Eligibility:", "Hours:", "Website:", "Email:", "Address:"];
+            labels.forEach(l => body = body.replace(new RegExp(`(${l})`, "g"), `<span class="label">$1</span>`));
 
-                const labels = ["Services:", "Eligibility:", "Hours:", "Website:", "Email:", "Coverage area:", "Address:", "Capacity:", "Financing:", "Legal status:", "Fees:"];
-                labels.forEach(l => body = body.replace(new RegExp(`(${l})`, "g"), `<span class="label">$1</span>`));
-
-                if (body.includes('Address:</span>')) {
-                    const addr = body.split('Address:</span>')[1].split('<span class="label">')[0].trim();
-                    body = body.replace(addr, `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(addr)}" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--muted)">${addr}</a>`);
-                }
-
-                [...new Set(hTerms)].sort((a,b) => b.length - a.length).forEach(t => {
-                    if (t.length < 2) return;
-                    body = body.replace(new RegExp(`(?<!<[^>]*)\\b(${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b`, "gi"), "<mark>$1</mark>");
-                });
-
-                return `<div class="card"><div class="org-header">${lines[0]}</div><div class="card-body">${body}</div></div>`;
-            }).join('');
-        }
-
-        function getCleanText() {
-            return currentFilteredList.map(b => `------------------------------------------\n${b.replace(/<[^>]*>/g, '')}\n`).join('\n');
-        }
-        function copyAllResults() {
-            navigator.clipboard.writeText(getCleanText()).then(() => {
-                const b = event.target; b.innerText = "✅ COPIED!";
-                setTimeout(() => b.innerText = "📋 COPY FULL", 2000);
+            // Highlighter
+            highlightList.sort((a,b) => b.length - a.length).forEach(t => {
+                if (t.length < 2) return;
+                const esc = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                body = body.replace(new RegExp(`(?<!<[^>]*)\\b(${esc})\\b`, "gi"), "<mark>$1</mark>");
             });
-        }
-        function downloadResults() {
-            const blob = new Blob([getCleanText()], { type: 'text/plain' });
-            const a = document.createElement('a');
-            a.download = `Resources_${new Date().toISOString().slice(0,10)}.txt`;
-            a.href = URL.createObjectURL(blob);
-            a.click();
-        }
-        function downloadCompactResults() {
-            const compactText = currentFilteredList.map(block => {
-                const lines = block.split('\n');
-                const phoneMatch = block.match(/\d{3} \d{3}-\d{4}/);
-                let address = "No Address Listed";
-                if (block.includes("Address:")) address = block.split("Address:")[1].split('\n')[0].trim();
-                return `${lines[0].toUpperCase()}\n📞 ${phoneMatch ? phoneMatch[0] : "N/A"}\n📍 ${address}\n-----------------------`;
-            }).join('\n\n');
-            const blob = new Blob([compactText], { type: 'text/plain' });
-            const a = document.createElement('a');
-            a.download = `Contacts_${new Date().toISOString().slice(0,10)}.txt`;
-            a.href = URL.createObjectURL(blob);
-            a.click();
-        }
-    </script>
+
+            return `<div class="card"><div class="org-header">${title}</div><div class="card-body">${body}</div></div>`;
+        }).join('');
+    }
+
+    // 5. EXPORTS
+    function getCleanText() { return currentFilteredList.map(b => `----------\n${b.replace(/<[^>]*>/g, '')}\n`).join('\n'); }
+    function copyAllResults() { navigator.clipboard.writeText(getCleanText()).then(() => alert("Copied!")); }
+    function downloadResults() {
+        const blob = new Blob([getCleanText()], { type: 'text/plain' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "Resources.txt"; a.click();
+    }
+    function downloadCompactResults() {
+        const compact = currentFilteredList.map(b => {
+            const lines = b.split('\n');
+            const phone = b.match(/\d{3} \d{3}-\d{4}/) || ["N/A"];
+            return `${lines[0].toUpperCase()}\nPhone: ${phone[0]}\n----------`;
+        }).join('\n');
+        const blob = new Blob([compact], { type: 'text/plain' });
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "Contacts.txt"; a.click();
+    }
+</script>
 </body>
 </html>
