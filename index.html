@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Search</title>
+    <style>
+        :root { 
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --primary: #06b6d4;
+            --secondary: #2dd4bf;
+            --accent: #22d3ee; 
+            --text: #f1f5f9;
+            --muted: #94a3b8;
+        }
+        
+        body { 
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif; 
+            margin: 0; 
+            background-color: var(--bg);
+            background-image: 
+                linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--text);
+            padding-bottom: 50px; 
+        }
+
+        .header { 
+            position: sticky; 
+            top: 0; 
+            background: linear-gradient(135deg, #083344, #115e59);
+            color: white; 
+            padding: 30px 15px; 
+            text-align: center; 
+            z-index: 100; 
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3); 
+            border-bottom: 2px solid var(--primary);
+        }
+        
+        h2 { 
+            margin: 0; 
+            font-size: 1.6rem; 
+            font-weight: 900;
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+        
+        #searchBox { 
+            width: 90%; 
+            max-width: 550px; 
+            padding: 15px 25px; 
+            border-radius: 12px; 
+            border: 2px solid rgba(6, 182, 212, 0.3); 
+            background: rgba(15, 23, 42, 0.8);
+            color: var(--primary);
+            font-size: 1.1rem; 
+            margin-top: 15px; 
+            outline: none; 
+            transition: all 0.3s ease;
+        }
+
+        #searchBox:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+        }
+        
+        #stats { 
+            font-size: 0.75rem; 
+            margin-top: 12px; 
+            font-weight: 700; 
+            letter-spacing: 1.5px;
+            background: rgba(6, 182, 212, 0.15);
+            color: var(--secondary);
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 4px;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            text-transform: uppercase;
+        }
+
+        #results { 
+            padding: 20px; 
+            max-width: 950px; 
+            margin: auto; 
+            display: grid;
+            gap: 25px;
+        }
+
+        .card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(12px);
+            border-radius: 15px; 
+            overflow: hidden; 
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            background: rgba(30, 41, 59, 0.9);
+        }
+
+        .org-header { 
+            background: rgba(6, 182, 212, 0.1);
+            padding: 20px; 
+            color: var(--primary); 
+            font-weight: 800; 
+            font-size: 1.3rem; 
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+        }
+
+        .card-body { 
+            padding: 20px; 
+            font-size: 0.95rem; 
+            line-height: 1.8; 
+            white-space: pre-wrap; 
+            color: #cbd5e1;
+        }
+
+        .label { 
+            color: var(--secondary); 
+            font-weight: 800; 
+            font-size: 0.7rem; 
+            text-transform: uppercase; 
+            display: inline-block; 
+            margin-top: 18px; 
+            background: rgba(45, 212, 191, 0.1);
+            padding: 3px 12px;
+            border-radius: 4px;
+            border-left: 3px solid var(--secondary);
+        }
+
+        mark { 
+            background: rgba(6, 182, 212, 0.3);
+            color: #fff;
+            padding: 2px 4px; 
+            border-radius: 2px; 
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .welcome {
+            text-align: center;
+            padding: 80px;
+            color: var(--muted);
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h2>Resource Search</h2>
+        <input type="text" id="searchBox" placeholder='Search: "food" OR "shelter"...' spellcheck="false">
+        <div id="stats">Initializing...</div>
+    </div>
+
+    <div id="results">
+        <div class="welcome">Ready for input. Search the Montreal directory above.</div>
+    </div>
+
+    <script>
+        let resources = [];
+        let totalCount = 0;
+
+        fetch('montreal2-en.txt')
+            .then(res => res.text())
+            .then(rawText => {
+                let cleanText = rawText
+                    .replace(/--- PAGE \d+ ---/g, "")
+                    .replace(/^\d+$/gm, "")
+                    .replace(/[ \t]{2,}/g, ' ');
+
+                let rawBlocks = cleanText.split(/(?<=Legal status: .*\n)/gi);
+                if (rawBlocks.length > 0) rawBlocks.shift(); 
+
+                const seen = new Set();
+                resources = [];
+
+                rawBlocks.forEach(block => {
+                    let lines = block.trim().split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                    if (lines.length < 3) return;
+
+                    let addressIndex = lines.findIndex(line => /\d+/.test(line) && line.length > 10);
+                    let startIndex = addressIndex > 0 ? addressIndex - 1 : 0;
+                    if (lines[startIndex].includes(':')) startIndex++;
+
+                    let processedLines = lines.slice(startIndex);
+                    if (processedLines.length === 0) return;
+
+                    const orgName = processedLines[0];
+                    const phoneMatch = block.match(/\d{3} \d{3}-\d{4}/);
+                    const phoneKey = phoneMatch ? phoneMatch[0] : "";
+                    const fingerPrint = (orgName.substring(0, 30) + phoneKey).toLowerCase().replace(/[^a-z0-9]/g, '');
+
+                    if (!seen.has(fingerPrint)) {
+                        seen.add(fingerPrint);
+                        resources.push(processedLines.join('\n'));
+                    }
+                });
+
+                totalCount = resources.length;
+                updateStats(0, false);
+            });
+
+        function updateStats(matches, isSearching) {
+            const statsDiv = document.getElementById('stats');
+            if (!isSearching) {
+                statsDiv.innerText = `DATABASE ONLINE | ${totalCount} TOTAL RESOURCES`;
+            } else {
+                statsDiv.innerText = `FOUND: ${matches} MATCHES | FROM ${totalCount} TOTAL RESOURCES`;
+            }
+        }
+
+        document.getElementById('searchBox').addEventListener('input', (e) => {
+            const query = e.target.value.trim();
+            if (query.length < 2) { 
+                document.getElementById('results').innerHTML = '<div class="welcome">Ready for input. Search the Montreal directory above.</div>'; 
+                updateStats(0, false);
+                return; 
+            }
+
+            const orGroups = query.split(/\s+OR\s+/i);
+            const filtered = resources.filter(block => {
+                const content = block.toLowerCase();
+                return orGroups.some(group => {
+                    const terms = [];
+                    const regex = /"([^"]+)"|(\S+)/g;
+                    let m;
+                    while ((m = regex.exec(group)) !== null) {
+                        const t = (m[1] || m[2]).toLowerCase();
+                        if (t !== "or") terms.push(t);
+                    }
+                    return terms.every(t => content.includes(t));
+                });
+            });
+
+            updateStats(filtered.length, true);
+            render(filtered, query);
+        });
+
+        function render(list, query) {
+            const resultsDiv = document.getElementById('results');
+            const highlightTerms = [];
+            const hRegex = /"([^"]+)"|(\S+)/g;
+            let hMatch;
+            while ((hMatch = hRegex.exec(query.replace(/\s+OR\s+/gi, " "))) !== null) {
+                const val = hMatch[1] || hMatch[2];
+                if (val && val.toLowerCase() !== 'or') highlightTerms.push(val.toLowerCase());
+            }
+
+            if (list.length === 0) {
+                resultsDiv.innerHTML = '<div class="welcome">⚠️ NO MATCHES FOUND.</div>';
+                return;
+            }
+
+            resultsDiv.innerHTML = list.slice(0, 50).map(block => {
+                const lines = block.split('\n');
+                const orgName = lines[0];
+                let body = lines.slice(1).join('\n');
+
+                const labels = ["Services:", "Eligibility:", "Hours:", "Website:", "Email:", "Coverage area:", "Address:", "Capacity:", "Financing:", "Legal status:", "Fees:"];
+                labels.forEach(label => {
+                    const reg = new RegExp(`(${label})`, "g");
+                    body = body.replace(reg, `<span class="label">$1</span>`);
+                });
+
+                const sortedTerms = [...new Set(highlightTerms)].sort((a, b) => b.length - a.length);
+                sortedTerms.forEach(term => {
+                    if (term.length < 3) return;
+                    const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const reg = new RegExp(`(${escaped})`, "gi");
+                    body = body.replace(reg, "<mark>$1</mark>");
+                });
+
+                return `<div class="card"><div class="org-header">${orgName}</div><div class="card-body">${body}</div></div>`;
+            }).join('');
+        }
+    </script>
+</body>
+</html>
