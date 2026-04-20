@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resource Search</title>
+    <title>Resource Search Pro</title>
     <style>
         :root { 
             --bg: #0f172a;
@@ -187,15 +187,15 @@
         <div id="stats">Initializing...</div>
         
         <div id="actionBar">
-            <button class="action-btn" onclick="copyAllResults()">Copy Full</button>
-            <button class="action-btn" onclick="downloadResults()">Full TXT</button>
-            <button class="action-btn" onclick="downloadCompactResults()" style="border-color:var(--accent); color:var(--accent);">Contacts TXT</button>
-            <button class="action-btn" onclick="window.print()"> Print PDF</button>
+            <button class="action-btn" onclick="copyAllResults()">📋 Copy Full</button>
+            <button class="action-btn" onclick="downloadResults()">📥 Full TXT</button>
+            <button class="action-btn" onclick="downloadCompactResults()" style="border-color:var(--accent); color:var(--accent);">📇 Contacts TXT</button>
+            <button class="action-btn" onclick="window.print()">🖨️ Print PDF</button>
         </div>
     </div>
 
     <div id="results">
-        <div class="welcome">Search to begin.</div>
+        <div class="welcome">Database Online. Search to begin.</div>
     </div>
 
     <script>
@@ -238,7 +238,7 @@
 
         function updateStats(matches, isSearching) {
             const statsDiv = document.getElementById('stats');
-            statsDiv.innerText = isSearching ? `FOUND: ${matches} MATCHES | FROM ${totalCount} TOTAL RESOURCES` : ` ${totalCount} TOTAL RESOURCES`;
+            statsDiv.innerText = isSearching ? `FOUND: ${matches} MATCHES | FROM ${totalCount} TOTAL RESOURCES` : `DATABASE ONLINE | ${totalCount} TOTAL RESOURCES`;
         }
 
         document.getElementById('searchBox').addEventListener('input', (e) => {
@@ -297,7 +297,7 @@
             }
 
             if (list.length === 0) {
-                resultsDiv.innerHTML = '<div class="welcome">NO MATCHES FOUND:'(</div>';
+                resultsDiv.innerHTML = '<div class="welcome">NO MATCHES FOUND.</div>';
                 return;
             }
 
@@ -331,8 +331,8 @@
         }
         function copyAllResults() {
             navigator.clipboard.writeText(getCleanText()).then(() => {
-                const b = event.target; b.innerText = "OPIED!";
-                setTimeout(() => b.innerText = "COPY FULL", 2000);
+                const b = event.target; b.innerText = "✅ COPIED!";
+                setTimeout(() => b.innerText = "📋 COPY FULL", 2000);
             });
         }
         function downloadResults() {
@@ -348,7 +348,7 @@
                 const phoneMatch = block.match(/\d{3} \d{3}-\d{4}/);
                 let address = "No Address Listed";
                 if (block.includes("Address:")) address = block.split("Address:")[1].split('\n')[0].trim();
-                return `${lines[0].toUpperCase()}\n ${phoneMatch ? phoneMatch[0] : "N/A"}\n ${address}\n-----------------------`;
+                return `${lines[0].toUpperCase()}\n📞 ${phoneMatch ? phoneMatch[0] : "N/A"}\n📍 ${address}\n-----------------------`;
             }).join('\n\n');
             const blob = new Blob([compactText], { type: 'text/plain' });
             const a = document.createElement('a');
