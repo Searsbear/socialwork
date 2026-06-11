@@ -49,16 +49,23 @@
             text-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
         }
 
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
         #searchBox { 
             width: 90%; 
-            max-width: 550px; 
+            max-width: 650px; 
             padding: 15px 25px; 
             border-radius: 12px; 
             border: 2px solid rgba(6, 182, 212, 0.3); 
             background: rgba(15, 23, 42, 0.8);
             color: var(--primary);
             font-size: 1.1rem; 
-            margin-top: 15px; 
             outline: none; 
             transition: all 0.3s ease;
         }
@@ -68,9 +75,35 @@
             box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
         }
 
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            width: 90%;
+            max-width: 650px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            flex: 1;
+            min-width: 130px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            background: rgba(15, 23, 42, 0.8);
+            color: var(--primary);
+            font-size: 0.85rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .filter-input:focus {
+            border-color: var(--secondary);
+        }
+
         #stats { 
             font-size: 0.75rem; 
-            margin-top: 12px; 
+            margin-top: 15px; 
             font-weight: 700; 
             letter-spacing: 1.5px;
             background: rgba(6, 182, 212, 0.15);
@@ -138,7 +171,30 @@
             font-weight: 800; 
             font-size: 1.3rem; 
             border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
         }
+        
+        .badge-container {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 12px;
+            border: 1px solid;
+            text-transform: uppercase;
+        }
+        .badge-age { background: rgba(45, 212, 191, 0.1); color: var(--secondary); border-color: var(--secondary); }
+        .badge-demo { background: rgba(217, 70, 239, 0.1); color: #d946ef; border-color: #d946ef; }
+        .badge-indig { background: rgba(245, 158, 11, 0.1); color: #f59e0b; border-color: #f59e0b; }
 
         .card-body { 
             padding: 20px; 
@@ -177,45 +233,15 @@
             color: var(--muted);
         }
 
-        details {
-            text-align: left;
-            max-width: 600px;
-            margin: auto;
-            border: 1px solid var(--primary);
-            border-radius: 15px;
-            background: rgba(6, 182, 212, 0.05);
-            overflow: hidden;
-        }
-
-        summary {
-            padding: 20px;
-            color: var(--primary);
-            font-weight: 800;
-            cursor: pointer;
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        code {
-            display: block;
-            background: #000;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 5px 0 15px 0;
-            border: 1px solid #333;
-            font-size: 0.9rem;
-            color: #fff;
-        }
-
         @media print {
             body { background: white; color: black; padding: 0; }
             .header, .welcome, #actionBar, mark { background: transparent !important; box-shadow: none !important; color: black !important; }
-            #searchBox, #actionBar, .welcome, #stats { display: none !important; }
+            .search-container, #actionBar, .welcome, #stats { display: none !important; }
             .card { border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px; background: white !important; }
             .org-header { background: #eee !important; color: black !important; border-bottom: 1px solid #ccc; }
             .label { border: none !important; background: transparent !important; color: black !important; font-weight: bold; }
             a { color: black !important; text-decoration: none !important; }
+            .badge { border: 1px solid #333 !important; color: #333 !important; }
         }
     </style>
 </head>
@@ -223,9 +249,32 @@
 
     <div class="header">
         <h2>Resource Search</h2>
-        <input type="text" id="searchBox" placeholder='Search: "food" OR -"women and children"...' spellcheck="false">
-        <div id="stats">Initializing...</div>
         
+        <div class="search-container">
+            <input type="text" id="searchBox" placeholder='Search: "food" OR -"women and children"...' spellcheck="false">
+            
+            <div class="filter-bar">
+                <input type="number" id="minAge" class="filter-input" placeholder="Min Age">
+                <input type="number" id="maxAge" class="filter-input" placeholder="Max Age">
+                
+                <select id="genderFilter" class="filter-input">
+                    <option value="any">Gender: Any</option>
+                    <option value="women">Serves Women</option>
+                    <option value="men">Serves Men</option>
+                    <option value="women-only">Women Only</option>
+                    <option value="men-only">Men Only</option>
+                </select>
+
+                <select id="popFilter" class="filter-input">
+                    <option value="any">Population: All</option>
+                    <option value="children">Families / Children</option>
+                    <option value="indigenous">Indigenous Services</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="stats">Initializing...</div>
+
         <div id="actionBar">
             <button class="action-btn" onclick="copyAllResults()">📋 Copy Full</button>
             <button class="action-btn" onclick="downloadResults()">📥 Full TXT</button>
@@ -235,36 +284,12 @@
     </div>
 
     <div id="results">
-        <div class="welcome">
-            <details>
-                <summary>
-                    <span>🚀 SEARCH PROTOCOLS</span>
-                    <span style="font-size:0.8rem; color:var(--secondary);">[CLICK TO EXPAND]</span>
-                </summary>
-                <div style="padding: 0 20px 20px 20px; border-top: 1px solid rgba(6,182,212,0.2);">
-                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">WHOLE WORD</p>
-                    <code>food</code>
-                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">EXACT PHRASE</p>
-                    <code>"mental health"</code>
-                    <p style="font-size:0.8rem; color:var(--secondary); font-weight:bold; margin:15px 0 5px 0;">EXCLUSION (NOT)</p>
-                    <code>shelter -"women and children"</code>
-                </div>
-            </details>
-            <p style="margin-top:20px;">Database Online. Search to begin.</p>
-        </div>
+        <div class="welcome"><p>Database Online. Search to begin.</p></div>
     </div>
 
     <script>
-        // 1. OFFLINE SERVICE WORKER
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => {});
-            });
-        }
-
-        // 2. DATA LOADING
+        // 1. DATA LOADING
         let resources = [];
-        let totalCount = 0;
         let currentFilteredList = [];
 
         fetch('montreal2-en.txt')
@@ -285,16 +310,69 @@
                     const orgName = processedLines[0];
                     const phoneMatch = block.match(/\d{3} \d{3}-\d{4}/);
                     const fingerPrint = (orgName.substring(0, 30) + (phoneMatch ? phoneMatch[0] : "")).toLowerCase().replace(/[^a-z0-9]/g, '');
+                    
                     if (!seen.has(fingerPrint)) {
                         seen.add(fingerPrint);
-                        resources.push(processedLines.join('\n'));
+                        const rawBlock = processedLines.join('\n');
+                        
+                        // --- EXTRACTING AGES ---
+                        let minAge = 0, maxAge = 120;
+                        const eligMatch = rawBlock.match(/Eligibility:([^\n]+)/i);
+                        const eligText = eligMatch ? eligMatch[1].toLowerCase() : "";
+                        
+                        if (eligMatch) {
+                            const rangeMatch = eligText.match(/(\d+)\s*(?:to|-)\s*(\d+)/);
+                            if (rangeMatch) { minAge = parseInt(rangeMatch[1]); maxAge = parseInt(rangeMatch[2]); }
+                            else {
+                                const overMatch = eligText.match(/(\d+)\s*(?:years|yrs)?\s*(?:and over|and up|\+)/i);
+                                if (overMatch) minAge = parseInt(overMatch[1]);
+                                else {
+                                    const underMatch = eligText.match(/(?:under|<)\s*(\d+)/i);
+                                    if (underMatch) maxAge = parseInt(underMatch[1]);
+                                }
+                            }
+                        }
+
+                        // --- EXTRACTING DEMOGRAPHICS ---
+                        let servesWomen = true;
+                        let servesMen = true;
+                        let servesChildren = false;
+                        let servesIndigenous = false;
+
+                        // Identify explicit gender keywords
+                        const mentionsWomen = /\b(women|mothers?|female|girls?|femmes?|mères?|filles?|pregnant|maternity|maternal)\b/.test(eligText);
+                        const mentionsMen = /\b(men|fathers?|male|boys?|hommes?|pères?|garçons?|paternal)\b/.test(eligText);
+                        
+                        // If it exclusively calls out one gender and does not use general terms (people/adults/families/everyone)
+                        if (mentionsWomen && !mentionsMen && !/\b(people|adults|everyone|anyone|public|families|parents|individuals)\b/.test(eligText)) {
+                            servesMen = false; // It's women-only
+                        }
+                        if (mentionsMen && !mentionsWomen && !/\b(people|adults|everyone|anyone|public|families|parents|individuals)\b/.test(eligText)) {
+                            servesWomen = false; // It's men-only
+                        }
+
+                        // Identify Families/Children
+                        if (/\b(children|youth|family|families|parents?|enfants?|jeunes?|familles?|dads?|moms?|toddlers?|babies|baby|teens?|teenagers?|boys?|girls?)\b/.test(eligText) || minAge < 18 || maxAge <= 25) {
+                            servesChildren = true;
+                        }
+
+                        // Identify Indigenous
+                        if (/\b(indigenous|aboriginal|first nations|inuit|métis|native|autochtones?)\b/i.test(rawBlock)) {
+                            servesIndigenous = true;
+                        }
+
+                        resources.push({
+                            raw: rawBlock,
+                            contentLower: rawBlock.toLowerCase(),
+                            minAge, maxAge,
+                            servesWomen, servesMen, servesChildren, servesIndigenous
+                        });
                     }
                 });
-                totalCount = resources.length;
-                document.getElementById('stats').innerText = `DATABASE ONLINE | ${totalCount} RESOURCES`;
+                document.getElementById('stats').innerText = `DATABASE ONLINE | ${resources.length} RESOURCES`;
             });
 
-        // 3. THE ATOMIC PARSER (State-Machine)
+        // 2. THE PARSER
         function parseTokens(str) {
             const terms = { includes: [], excludes: [] };
             let i = 0;
@@ -302,7 +380,7 @@
                 if (str[i] === ' ') { i++; continue; }
                 let isExclude = false;
                 if (str[i] === '-') { isExclude = true; i++; }
-                
+
                 let term = "";
                 let isPhrase = false;
                 if (str[i] === '"') {
@@ -321,27 +399,49 @@
             return terms;
         }
 
-        // 4. SEARCH EXECUTION
-        document.getElementById('searchBox').addEventListener('input', (e) => {
-            const query = e.target.value.trim();
-            if (query.length < 2) { 
+        // 3. SEARCH EXECUTION
+        function executeSearch() {
+            const query = document.getElementById('searchBox').value.trim();
+            const minInput = parseInt(document.getElementById('minAge').value);
+            const maxInput = parseInt(document.getElementById('maxAge').value);
+            const genderFilter = document.getElementById('genderFilter').value;
+            const popFilter = document.getElementById('popFilter').value;
+            
+            const userMin = isNaN(minInput) ? 0 : minInput;
+            const userMax = isNaN(maxInput) ? 120 : maxInput;
+
+            // Clear screen if completely empty
+            if (query.length < 2 && isNaN(minInput) && isNaN(maxInput) && genderFilter === 'any' && popFilter === 'any') { 
                 document.getElementById('results').innerHTML = '<div class="welcome"><p>Ready to search.</p></div>'; 
                 document.getElementById('actionBar').style.display = 'none';
                 return; 
             }
 
-            const orGroups = query.split(/\s+OR\s+/i);
-            currentFilteredList = resources.filter(block => {
-                const content = block.toLowerCase();
+            const orGroups = query ? query.split(/\s+OR\s+/i) : [];
+
+            currentFilteredList = resources.filter(res => {
+                // Filter 1: Age Overlap
+                if (userMin > res.maxAge || userMax < res.minAge) return false;
+
+                // Filter 2: Gender Selection
+                if (genderFilter === 'women' && !res.servesWomen) return false;
+                if (genderFilter === 'men' && !res.servesMen) return false;
+                if (genderFilter === 'women-only' && (!res.servesWomen || res.servesMen)) return false;
+                if (genderFilter === 'men-only' && (!res.servesMen || res.servesWomen)) return false;
+
+                // Filter 3: Population Selection
+                if (popFilter === 'children' && !res.servesChildren) return false;
+                if (popFilter === 'indigenous' && !res.servesIndigenous) return false;
+
+                // Filter 4: Keyword Matching
+                if (orGroups.length === 0) return true;
                 return orGroups.some(group => {
                     const { includes, excludes } = parseTokens(group);
-                    
                     const check = (t) => {
                         const esc = t.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                         const reg = t.isPhrase ? new RegExp(esc, 'i') : new RegExp(`\\b${esc}\\b`, 'i');
-                        return reg.test(content);
+                        return reg.test(res.contentLower);
                     };
-
                     return includes.every(check) && !excludes.some(check);
                 });
             });
@@ -349,9 +449,14 @@
             document.getElementById('actionBar').style.display = currentFilteredList.length > 0 ? 'flex' : 'none';
             document.getElementById('stats').innerText = `FOUND: ${currentFilteredList.length} MATCHES`;
             render(currentFilteredList, query);
+        }
+
+        // Attach listeners
+        ['searchBox', 'minAge', 'maxAge', 'genderFilter', 'popFilter'].forEach(id => {
+            document.getElementById(id).addEventListener('input', executeSearch);
         });
 
-        // 5. RENDERING & FORMATTING
+        // 4. RENDERING & FORMATTING
         function render(list, query) {
             const resultsDiv = document.getElementById('results');
             const tokens = parseTokens(query.replace(/\s+OR\s+/gi, " "));
@@ -362,24 +467,18 @@
                 return;
             }
 
-            resultsDiv.innerHTML = list.slice(0, 100).map(block => {
-                const lines = block.split('\n');
+            resultsDiv.innerHTML = list.slice(0, 100).map(item => {
+                const lines = item.raw.split('\n');
                 let body = lines.slice(1).join('\n');
 
-                // Auto-Links
+                // Links
                 body = body.replace(/(?<!EMAIL: )(?<!">)(?:https?:\/\/)?(?:www\.)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(\/[^\s\n]*)?/gi, (url) => `<a href="${url.startsWith('http')?url:'https://'+url}" target="_blank">${url}</a>`);
                 body = body.replace(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/gi, `<a href="mailto:$1">$1</a>`);
                 body = body.replace(/(\d{3} \d{3}-\d{4})/g, `<a href="tel:$1" style="font-weight:bold">$1</a>`);
 
                 // Labels
-                const labels = ["Services:", "Eligibility:", "Hours:", "Website:", "Email:", "Address:"];
+                const labels = ["Services:", "Eligibility:", "Hours:", "Website:", "Email:", "Address:", "Coverage area:", "Fees:", "Financing:"];
                 labels.forEach(l => body = body.replace(new RegExp(`(${l})`, "g"), `<span class="label">$1</span>`));
-
-                // Maps
-                if (body.includes('Address:</span>')) {
-                    const addr = body.split('Address:</span>')[1].split('<span class="label">')[0].trim();
-                    body = body.replace(addr, `<a href="https://www.google.com/maps/search/${encodeURIComponent(addr)}" target="_blank" style="color:inherit;text-decoration:none;border-bottom:1px dashed var(--muted)">${addr}</a>`);
-                }
 
                 // Highlighter
                 highlightTerms.sort((a,b) => b.length - a.length).forEach(t => {
@@ -387,33 +486,36 @@
                     const esc = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                     body = body.replace(new RegExp(`(?<!<[^>]*)\\b(${esc})\\b`, "gi"), "<mark>$1</mark>");
                 });
+                
+                // Construct Header Badges
+                let badges = '';
+                if (item.minAge > 0 || item.maxAge < 120) badges += `<span class="badge badge-age">${item.minAge}-${item.maxAge} YRS</span>`;
+                if (item.servesWomen && !item.servesMen) badges += `<span class="badge badge-demo">WOMEN ONLY</span>`;
+                if (item.servesMen && !item.servesWomen) badges += `<span class="badge badge-demo" style="color:var(--primary); border-color:var(--primary)">MEN ONLY</span>`;
+                if (item.servesChildren) badges += `<span class="badge badge-demo" style="color:white; border-color:white; background:rgba(255,255,255,0.1)">FAMILIES/YOUTH</span>`;
+                if (item.servesIndigenous) badges += `<span class="badge badge-indig">INDIGENOUS</span>`;
 
-                return `<div class="card"><div class="org-header">${lines[0]}</div><div class="card-body">${body}</div></div>`;
+                return `<div class="card">
+                    <div class="org-header">
+                        <span>${lines[0]}</span>
+                        <div class="badge-container">${badges}</div>
+                    </div>
+                    <div class="card-body">${body}</div>
+                </div>`;
             }).join('');
         }
 
-        // 6. EXPORTS
-        function getCleanText() { return currentFilteredList.map(b => `--------------------\n${b.replace(/<[^>]*>/g, '')}\n`).join('\n'); }
-        function copyAllResults() { 
-            navigator.clipboard.writeText(getCleanText()).then(() => {
-                const b = event.target; b.innerText = "✅ COPIED!";
-                setTimeout(() => b.innerText = "📋 COPY FULL", 2000);
-            });
-        }
+        // 5. EXPORTS
+        function getCleanText() { return currentFilteredList.map(item => `--------------------\n${item.raw.replace(/<[^>]*>/g, '')}\n`).join('\n'); }
+        function copyAllResults() { navigator.clipboard.writeText(getCleanText()).then(() => alert("Copied to clipboard.")); }
         function downloadResults() {
-            const blob = new Blob([getCleanText()], { type: 'text/plain' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "Resources_Full.txt"; a.click();
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([getCleanText()], { type: 'text/plain' })); 
+            a.download = "Resources.txt"; a.click();
         }
         function downloadCompactResults() {
-            const compact = currentFilteredList.map(b => {
-                const lines = b.split('\n');
-                const phone = b.match(/\d{3} \d{3}-\d{4}/) || ["N/A"];
-                let addr = "N/A";
-                if (b.includes("Address:")) addr = b.split("Address:")[1].split('\n')[0].trim();
-                return `${lines[0].toUpperCase()}\n📞 ${phone[0]}\n📍 ${addr}\n--------------------`;
-            }).join('\n\n');
-            const blob = new Blob([compact], { type: 'text/plain' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "Contact_List.txt"; a.click();
+            const compact = currentFilteredList.map(item => `${item.raw.split('\n')[0].toUpperCase()}\n📞 ${item.raw.match(/\d{3} \d{3}-\d{4}/) || "N/A"}\n`).join('\n\n');
+            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([compact], { type: 'text/plain' })); 
+            a.download = "Contacts.txt"; a.click();
         }
     </script>
 </body>
