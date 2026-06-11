@@ -232,6 +232,32 @@
             padding: 40px;
             color: var(--muted);
         }
+        
+        /* --- New Dropdown Styles --- */
+#toggleSearchBtn {
+    margin-top: 15px;
+    font-size: 0.85rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dropdown-container {
+    max-height: 500px; /* High enough to fit the expanded content */
+    overflow: hidden;
+    opacity: 1;
+    transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+}
+
+.dropdown-container.collapsed {
+    max-height: 0;
+    opacity: 0;
+    margin-top: 0;
+    pointer-events: none;
+}
+
 
         @media print {
             body { background: white; color: black; padding: 0; }
@@ -250,6 +276,10 @@
     <div class="header">
         <h2>Resource Search</h2>
         
+        <button id="toggleSearchBtn" class="action-btn">
+        <span>🔍</span> Search & Filters
+    </button>
+      <div id="searchDropdown" class="dropdown-container collapsed">
         <div class="search-container">
             <input type="text" id="searchBox" placeholder='Search: "food" OR -"women and children"...' spellcheck="false">
             
@@ -281,6 +311,7 @@
             <button class="action-btn" onclick="downloadCompactResults()" style="border-color:var(--accent); color:var(--accent);">📇 Contacts TXT</button>
             <button class="action-btn" onclick="window.print()">🖨️ Print PDF</button>
         </div>
+    </div>
     </div>
 
     <div id="results">
@@ -454,6 +485,13 @@
         // Attach listeners
         ['searchBox', 'minAge', 'maxAge', 'genderFilter', 'popFilter'].forEach(id => {
             document.getElementById(id).addEventListener('input', executeSearch);
+        });
+        
+        // Dropdown
+        
+        document.getElementById('toggleSearchBtn').addEventListener('click', function() {
+    const dropdown = document.getElementById('searchDropdown');
+    dropdown.classList.toggle('collapsed');
         });
 
         // 4. RENDERING & FORMATTING
