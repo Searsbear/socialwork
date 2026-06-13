@@ -101,6 +101,66 @@
             border-color: var(--secondary);
         }
 
+        /* --- New Borough Filter Styles --- */
+        .borough-filter-container {
+            width: 90%;
+            max-width: 650px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+
+        .borough-header { 
+            font-size: 0.75rem; 
+            color: var(--primary); 
+            text-transform: uppercase;
+            font-weight: 800; 
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .borough-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            max-height: 120px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Custom Scrollbar for the list */
+        .borough-list::-webkit-scrollbar { width: 6px; }
+        .borough-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 4px; }
+        .borough-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 4px; }
+
+        .borough-chip {
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(148, 163, 184, 0.4);
+            color: var(--muted);
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        .borough-chip:hover {
+            border-color: var(--primary);
+            color: var(--text);
+        }
+
+        .borough-chip.selected {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 8px rgba(6, 182, 212, 0.3);
+        }
+
         #stats { 
             font-size: 0.75rem; 
             margin-top: 15px; 
@@ -177,7 +237,7 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        
+
         .badge-container {
             display: flex;
             gap: 5px;
@@ -232,37 +292,36 @@
             padding: 40px;
             color: var(--muted);
         }
-        
-        /* --- New Dropdown Styles --- */
-#toggleSearchBtn {
-    margin-top: 15px;
-    font-size: 0.85rem;
-    padding: 10px 20px;
-    border-radius: 8px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
 
-.dropdown-container {
-    max-height: 500px; /* High enough to fit the expanded content */
-    overflow: hidden;
-    opacity: 1;
-    transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
-}
+        /* --- Dropdown Styles --- */
+        #toggleSearchBtn {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-.dropdown-container.collapsed {
-    max-height: 0;
-    opacity: 0;
-    margin-top: 0;
-    pointer-events: none;
-}
+        .dropdown-container {
+            max-height: 800px;
+            overflow: hidden;
+            opacity: 1;
+            transition: max-height 0.4s ease, opacity 0.3s ease, margin 0.3s ease;
+        }
 
+        .dropdown-container.collapsed {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+            pointer-events: none;
+        }
 
         @media print {
             body { background: white; color: black; padding: 0; }
             .header, .welcome, #actionBar, mark { background: transparent !important; box-shadow: none !important; color: black !important; }
-            .search-container, #actionBar, .welcome, #stats { display: none !important; }
+            .search-container, #actionBar, .welcome, #stats, #toggleSearchBtn { display: none !important; }
             .card { border: 1px solid #ccc !important; page-break-inside: avoid; margin-bottom: 20px; background: white !important; }
             .org-header { background: #eee !important; color: black !important; border-bottom: 1px solid #ccc; }
             .label { border: none !important; background: transparent !important; color: black !important; font-weight: bold; }
@@ -275,43 +334,51 @@
 
     <div class="header">
         <h2>Resource Search</h2>
-        
-        <button id="toggleSearchBtn" class="action-btn">
-        <span>🔍</span> Search & Filters
-    </button>
-      <div id="searchDropdown" class="dropdown-container collapsed">
-        <div class="search-container">
-            <input type="text" id="searchBox" placeholder='Search: "food" OR -"women and children"...' spellcheck="false">
-            
-            <div class="filter-bar">
-                <input type="number" id="minAge" class="filter-input" placeholder="Min Age">
-                <input type="number" id="maxAge" class="filter-input" placeholder="Max Age">
-                
-                <select id="genderFilter" class="filter-input">
-                    <option value="any">Gender: Any</option>
-                    <option value="women">Serves Women</option>
-                    <option value="men">Serves Men</option>
-                    <option value="women-only">Women Only</option>
-                    <option value="men-only">Men Only</option>
-                </select>
 
-                <select id="popFilter" class="filter-input">
-                    <option value="any">Population: All</option>
-                    <option value="children">Families / Children</option>
-                    <option value="indigenous">Indigenous Services</option>
-                </select>
+        <button id="toggleSearchBtn" class="action-btn">
+            <span>🔍</span> Search & Filters
+        </button>
+
+        <div id="searchDropdown" class="dropdown-container collapsed">
+            <div class="search-container">
+                <input type="text" id="searchBox" placeholder='Search: "food" OR -"women and children"...' spellcheck="false">
+
+                <div class="filter-bar">
+                    <input type="number" id="minAge" class="filter-input" placeholder="Min Age">
+                    <input type="number" id="maxAge" class="filter-input" placeholder="Max Age">
+
+                    <select id="genderFilter" class="filter-input">
+                        <option value="any">Gender: Any</option>
+                        <option value="women">Serves Women</option>
+                        <option value="men">Serves Men</option>
+                        <option value="women-only">Women Only</option>
+                        <option value="men-only">Men Only</option>
+                    </select>
+
+                    <select id="popFilter" class="filter-input">
+                        <option value="any">Population: All</option>
+                        <option value="children">Families / Children</option>
+                        <option value="indigenous">Indigenous Services</option>
+                    </select>
+                </div>
+
+                <div class="borough-filter-container">
+                    <div class="borough-header">Filter by Borough (Any selected)</div>
+                    <div id="boroughList" class="borough-list">
+                        </div>
+                </div>
+
+            </div>
+
+            <div id="stats">Initializing...</div>
+
+            <div id="actionBar">
+                <button class="action-btn" onclick="copyAllResults()">📋 Copy Full</button>
+                <button class="action-btn" onclick="downloadResults()">📥 Full TXT</button>
+                <button class="action-btn" onclick="downloadCompactResults()" style="border-color:var(--accent); color:var(--accent);">📇 Contacts TXT</button>
+                <button class="action-btn" onclick="window.print()">🖨️ Print PDF</button>
             </div>
         </div>
-
-        <div id="stats">Initializing...</div>
-
-        <div id="actionBar">
-            <button class="action-btn" onclick="copyAllResults()">📋 Copy Full</button>
-            <button class="action-btn" onclick="downloadResults()">📥 Full TXT</button>
-            <button class="action-btn" onclick="downloadCompactResults()" style="border-color:var(--accent); color:var(--accent);">📇 Contacts TXT</button>
-            <button class="action-btn" onclick="window.print()">🖨️ Print PDF</button>
-        </div>
-    </div>
     </div>
 
     <div id="results">
@@ -319,6 +386,48 @@
     </div>
 
     <script>
+        // --- BOROUGH DATA & SETUP ---
+        const boroughsList = [
+            "Ahuntsic-Cartierville", "Anjou", "Côte-des-Neiges–Notre-Dame-de-Grâce",
+            "Lachine", "LaSalle", "Le Plateau-Mont-Royal", "Le Sud-Ouest",
+            "L'Île-Bizard–Sainte-Geneviève", "Mercier–Hochelaga-Maisonneuve",
+            "Montréal-Nord", "Outremont", "Pierrefonds-Roxboro",
+            "Rivière-des-Prairies–Pointe-aux-Trembles", "Rosemont–La Petite-Patrie",
+            "Saint-Laurent", "Saint-Léonard", "Verdun", "Ville-Marie",
+            "Villeray–Saint-Michel–Parc-Extension"
+        ];
+        
+        let selectedBoroughs = new Set();
+        let normalizedBoroughsMap = new Map(); // Helps map normalized search strings back to UI names
+
+        // Helper to normalize text (removes accents, converts hyphens/dashes to spaces)
+        function normalizeText(text) {
+            return text.toLowerCase()
+                       .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // remove accents
+                       .replace(/[-–—']/g, " "); // remove hyphens, en-dashes, and apostrophes
+        }
+
+        // Initialize Borough Chips
+        const boroughContainer = document.getElementById('boroughList');
+        boroughsList.forEach(b => {
+            normalizedBoroughsMap.set(b, normalizeText(b));
+
+            const chip = document.createElement('div');
+            chip.className = 'borough-chip';
+            chip.textContent = b;
+            chip.onclick = () => {
+                if (selectedBoroughs.has(b)) {
+                    selectedBoroughs.delete(b);
+                    chip.classList.remove('selected');
+                } else {
+                    selectedBoroughs.add(b);
+                    chip.classList.add('selected');
+                }
+                executeSearch();
+            };
+            boroughContainer.appendChild(chip);
+        });
+
         // 1. DATA LOADING
         let resources = [];
         let currentFilteredList = [];
@@ -341,16 +450,16 @@
                     const orgName = processedLines[0];
                     const phoneMatch = block.match(/\d{3} \d{3}-\d{4}/);
                     const fingerPrint = (orgName.substring(0, 30) + (phoneMatch ? phoneMatch[0] : "")).toLowerCase().replace(/[^a-z0-9]/g, '');
-                    
+
                     if (!seen.has(fingerPrint)) {
                         seen.add(fingerPrint);
                         const rawBlock = processedLines.join('\n');
-                        
+
                         // --- EXTRACTING AGES ---
                         let minAge = 0, maxAge = 120;
                         const eligMatch = rawBlock.match(/Eligibility:([^\n]+)/i);
                         const eligText = eligMatch ? eligMatch[1].toLowerCase() : "";
-                        
+
                         if (eligMatch) {
                             const rangeMatch = eligText.match(/(\d+)\s*(?:to|-)\s*(\d+)/);
                             if (rangeMatch) { minAge = parseInt(rangeMatch[1]); maxAge = parseInt(rangeMatch[2]); }
@@ -370,24 +479,20 @@
                         let servesChildren = false;
                         let servesIndigenous = false;
 
-                        // Identify explicit gender keywords
                         const mentionsWomen = /\b(women|mothers?|female|girls?|femmes?|mères?|filles?|pregnant|maternity|maternal)\b/.test(eligText);
                         const mentionsMen = /\b(men|fathers?|male|boys?|hommes?|pères?|garçons?|paternal)\b/.test(eligText);
-                        
-                        // If it exclusively calls out one gender and does not use general terms (people/adults/families/everyone)
+
                         if (mentionsWomen && !mentionsMen && !/\b(people|adults|everyone|anyone|public|families|parents|individuals)\b/.test(eligText)) {
-                            servesMen = false; // It's women-only
+                            servesMen = false; 
                         }
                         if (mentionsMen && !mentionsWomen && !/\b(people|adults|everyone|anyone|public|families|parents|individuals)\b/.test(eligText)) {
-                            servesWomen = false; // It's men-only
+                            servesWomen = false; 
                         }
 
-                        // Identify Families/Children
                         if (/\b(children|youth|family|families|parents?|enfants?|jeunes?|familles?|dads?|moms?|toddlers?|babies|baby|teens?|teenagers?|boys?|girls?)\b/.test(eligText) || minAge < 18 || maxAge <= 25) {
                             servesChildren = true;
                         }
 
-                        // Identify Indigenous
                         if (/\b(indigenous|aboriginal|first nations|inuit|métis|native|autochtones?)\b/i.test(rawBlock)) {
                             servesIndigenous = true;
                         }
@@ -395,6 +500,7 @@
                         resources.push({
                             raw: rawBlock,
                             contentLower: rawBlock.toLowerCase(),
+                            contentNormalized: normalizeText(rawBlock), // Used for strict borough matching
                             minAge, maxAge,
                             servesWomen, servesMen, servesChildren, servesIndigenous
                         });
@@ -437,12 +543,12 @@
             const maxInput = parseInt(document.getElementById('maxAge').value);
             const genderFilter = document.getElementById('genderFilter').value;
             const popFilter = document.getElementById('popFilter').value;
-            
+
             const userMin = isNaN(minInput) ? 0 : minInput;
             const userMax = isNaN(maxInput) ? 120 : maxInput;
 
             // Clear screen if completely empty
-            if (query.length < 2 && isNaN(minInput) && isNaN(maxInput) && genderFilter === 'any' && popFilter === 'any') { 
+            if (query.length < 2 && isNaN(minInput) && isNaN(maxInput) && genderFilter === 'any' && popFilter === 'any' && selectedBoroughs.size === 0) { 
                 document.getElementById('results').innerHTML = '<div class="welcome"><p>Ready to search.</p></div>'; 
                 document.getElementById('actionBar').style.display = 'none';
                 return; 
@@ -464,7 +570,20 @@
                 if (popFilter === 'children' && !res.servesChildren) return false;
                 if (popFilter === 'indigenous' && !res.servesIndigenous) return false;
 
-                // Filter 4: Keyword Matching
+                // Filter 4: Boroughs (OR Logic - match if it contains AT LEAST ONE selected borough)
+                if (selectedBoroughs.size > 0) {
+                    let matchesBorough = false;
+                    for (let b of selectedBoroughs) {
+                        const normalizedTarget = normalizedBoroughsMap.get(b);
+                        if (res.contentNormalized.includes(normalizedTarget)) {
+                            matchesBorough = true;
+                            break;
+                        }
+                    }
+                    if (!matchesBorough) return false;
+                }
+
+                // Filter 5: Keyword Matching
                 if (orGroups.length === 0) return true;
                 return orGroups.some(group => {
                     const { includes, excludes } = parseTokens(group);
@@ -486,12 +605,11 @@
         ['searchBox', 'minAge', 'maxAge', 'genderFilter', 'popFilter'].forEach(id => {
             document.getElementById(id).addEventListener('input', executeSearch);
         });
-        
-        // Dropdown
-        
+
+        // Dropdown toggle
         document.getElementById('toggleSearchBtn').addEventListener('click', function() {
-    const dropdown = document.getElementById('searchDropdown');
-    dropdown.classList.toggle('collapsed');
+            const dropdown = document.getElementById('searchDropdown');
+            dropdown.classList.toggle('collapsed');
         });
 
         // 4. RENDERING & FORMATTING
@@ -524,7 +642,7 @@
                     const esc = t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
                     body = body.replace(new RegExp(`(?<!<[^>]*)\\b(${esc})\\b`, "gi"), "<mark>$1</mark>");
                 });
-                
+
                 // Construct Header Badges
                 let badges = '';
                 if (item.minAge > 0 || item.maxAge < 120) badges += `<span class="badge badge-age">${item.minAge}-${item.maxAge} YRS</span>`;
